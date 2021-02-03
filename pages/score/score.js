@@ -13,7 +13,7 @@ Page({
     lastUpdated: "暂无成绩",
 
     termPickerData: {
-      range: [["选择学年"], ["选择学期"], "类别"],
+      range: [["选择学年"], ["选择学期"], ["类别"]],
       value: [0, 0, 0],
     },
   },
@@ -66,7 +66,9 @@ Page({
       });
     }
 
+    //获得学期数据
     const termInfo = termUtil.getInfoFromTerm(this.data.time.term);
+    const grade = parseInt(this.data.userInfo.uno.substring(0, 4));
 
     let termPickerData = termUtil.getTermPickerData(grade, termInfo);
     termPickerData = {
@@ -74,8 +76,6 @@ Page({
       value: [...termPickerData.value, 0],
     };
 
-    // 填充学期选择器数据
-    const grade = parseInt(this.data.userInfo.uno.substring(0, 4));
     this.setPageState({
       termInfo: termInfo,
       currentTerm: termUtil.getPrettyTermStr(termInfo),
@@ -207,15 +207,9 @@ Page({
       sort: !this.data.sort,
     });
   },
-  onTermPickerChange: function (e) {
-    const { range } = this.data.termPickerData;
-    const termInfo = {
-      year: range[0][e.detail.value[0]].substring(0, 4),
-      semester: e.detail.value[1] + 1,
-    };
-
-    const isDetail = e.detail.value[2] === 1;
-
+  termChange: function (e) {
+    const termInfo = e.detail.termInfo;
+    const isDetail = e.detail.thirdData === 1;
     wx.showLoading({
       title: "获取成绩中",
       mask: true,
